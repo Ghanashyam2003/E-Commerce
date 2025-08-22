@@ -10,7 +10,7 @@ import Cart from "./pages/Cart";
 import Navbar from "./components/Navbar";
 
 const App = () => {
-  const [location, setLocation] = useState("");
+  const [location, setLocation] = useState(null);
 
   const getLocation = async () => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
@@ -22,16 +22,20 @@ const App = () => {
       try {
         const response = await axios.get(url);
 
-        const exactLocation =
-          response.data.address.city ||
-          response.data.address.town ||
-          response.data.address.village ||
-          response.data.address.state;
+        const exactLocation = {
+          county:
+            response.data.address.city ||
+            response.data.address.town ||
+            response.data.address.village ||
+            response.data.address.county ||
+            "",
+          state: response.data.address.state || "",
+        };
 
         setLocation(exactLocation);
         console.log("Exact location:", exactLocation);
       } catch (err) {
-        console.log(err);
+        console.log("Location fetch error:", err);
       }
     });
   };
@@ -42,7 +46,6 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      {/* pass location as a prop */}
       <Navbar location={location} />
       <Routes>
         <Route path="/" element={<Home />} />
