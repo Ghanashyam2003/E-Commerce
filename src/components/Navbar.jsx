@@ -2,11 +2,15 @@ import { MapPin } from "lucide-react";
 import React from "react";
 import { FaCaretDown } from "react-icons/fa6";
 import { IoCartOutline } from "react-icons/io5";
-import { Link, NavLink } from "react-router-dom"; // ✅ import NavLink here
+import { Link, NavLink } from "react-router-dom";
+import {
+  SignedIn,
+  SignedOut,
+  SignInButton,
+  UserButton,
+} from "@clerk/clerk-react";
 
-function Navbar() {
-  const location = false;
-
+function Navbar({ location }) {
   return (
     <div className="bg-white py-3.5 shadow-2xl">
       <div className="max-w-6xl mx-auto px-4 flex items-center justify-between">
@@ -19,9 +23,16 @@ function Navbar() {
           </Link>
           <div className="flex gap-1 cursor-pointer text-gray-700 items-center">
             <MapPin className="text-red-500" />
-            <span className="font-semibold">
-              {location ? <div></div> : "Add Address"}
-            </span>
+            <div className="flex flex-col font-semibold">
+              {location ? (
+                <>
+                  <p>{location.county}</p>
+                  <p>{location.state}</p>
+                </>
+              ) : (
+                "Add Address"
+              )}
+            </div>
             <FaCaretDown />
           </div>
         </div>
@@ -90,12 +101,28 @@ function Navbar() {
               </NavLink>
             </li>
           </ul>
+
+          {/* Cart Icon */}
           <Link to={"/cart"} className="relative ">
             <IoCartOutline className="h-7 w-7" />
-            <span className="bg-red-500 px-2 rounded-full absolute -top-4 -right-4  text-white ">
+            <span className="bg-red-500 px-2 rounded-full absolute -top-4 -right-4 text-white">
               0
             </span>
           </Link>
+
+          {/* Auth Section */}
+          <div>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-700">
+                  Sign In
+                </button>
+              </SignInButton>
+            </SignedOut>
+            <SignedIn>
+              <UserButton />
+            </SignedIn>
+          </div>
         </nav>
       </div>
     </div>

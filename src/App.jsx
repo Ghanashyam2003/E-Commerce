@@ -1,26 +1,58 @@
- import React from 'react'
- import { BrowserRouter,Routes,Route } from 'react-router-dom'
-import Home from './pages/Home'
-import Products from './pages/Products'
-import About from './pages/About'
-import Contact from './pages/Contact'
-import Cart from './pages/Cart'
-import Navbar from './components/Navbar'
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import axios from "axios";
 
+import Home from "./pages/Home";
+import Products from "./pages/Products";
+import About from "./pages/About";
+import Contact from "./pages/Contact";
+import Cart from "./pages/Cart";
+import Navbar from "./components/Navbar";
 
- const App = () => {
-   return (
-     <BrowserRouter>
-     <Navbar />
-       <Routes>
-         <Route path="/" element={<h1>Home</h1>} />
-         <Route path="/products" element={<h1>Products</h1>} />
-         <Route path="/about" element={<h1>About</h1>} />
-         <Route path="/contact" element={<h1>Contact</h1>} />
-         <Route path="/cart" element={<h1>Cart</h1>} />
-       </Routes>
-     </BrowserRouter>
-   );
- }
- 
- export default App
+const App = () => {
+  const [location, setLocation] = useState("");
+
+  const getLocation = async () => {
+    navigator.geolocation.getCurrentPosition(async (pos) => {
+      const { latitude, longitude } = pos.coords;
+      console.log(latitude, longitude);
+
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`;
+
+      try {
+        const response = await axios.get(url);
+
+        const exactLocation =
+          response.data.address.city ||
+          response.data.address.town ||
+          response.data.address.village ||
+          response.data.address.state;
+
+        setLocation(exactLocation);
+        console.log("Exact location:", exactLocation);
+      } catch (err) {
+        console.log(err);
+      }
+    });
+  };
+
+  useEffect(() => {
+    getLocation();
+  }, []);
+
+  return (
+    <BrowserRouter>
+      {/* pass location as a prop */}
+      <Navbar location={location} />
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/products" element={<Products />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
+    </BrowserRouter>
+  );
+};
+
+export default App;
