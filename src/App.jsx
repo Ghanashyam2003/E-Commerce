@@ -9,9 +9,11 @@ import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Navbar from "./components/Navbar";
 
+
 const App = () => {
   const [location, setLocation] = useState(null);
-
+  const [openDropdown,setOpenDropdown] = useState(false)
+  
   const getLocation = async () => {
     navigator.geolocation.getCurrentPosition(async (pos) => {
       const { latitude, longitude } = pos.coords;
@@ -33,6 +35,7 @@ const App = () => {
         };
 
         setLocation(exactLocation);
+        setOpenDropdown(false)
         console.log("Exact location:", exactLocation);
       } catch (err) {
         console.log("Location fetch error:", err);
@@ -46,7 +49,7 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <Navbar location={location} />
+      <Navbar location={location} getLocation={getLocation} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}/>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
