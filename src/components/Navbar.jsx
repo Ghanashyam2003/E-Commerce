@@ -123,7 +123,7 @@ export default function Navbar({
             onClick={() => setMobileOpen(false)}
           >
             <span className="font-serif">Z</span>
-            <span className="font- text-gray-950" font-size="2xl" >
+            <span className="font- text-gray-950" fontSize="2xl" >
               aptro
             </span>
           </Link>
