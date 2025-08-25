@@ -8,7 +8,7 @@ import About from "./pages/About";
 import Contact from "./pages/Contact";
 import Cart from "./pages/Cart";
 import Navbar from "./components/Navbar";
-
+import Footer from "./components/Footer";
 
 const App = () => {
   const [location, setLocation] = useState(null);
@@ -49,7 +49,12 @@ const App = () => {
 
   return (
     <BrowserRouter>
-      <Navbar location={location} getLocation={getLocation} openDropdown={openDropdown} setOpenDropdown={setOpenDropdown}/>
+      <Navbar
+        location={location}
+        getLocation={getLocation}
+        openDropdown={openDropdown}
+        setOpenDropdown={setOpenDropdown}
+      />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
@@ -57,6 +62,7 @@ const App = () => {
         <Route path="/contact" element={<Contact />} />
         <Route path="/cart" element={<Cart />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   );
 };
