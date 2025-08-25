@@ -5,53 +5,65 @@ export const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  // Fetch all products from DummyJSON
+  // Allowed category mapping
+  const allowedCategories = {
+    smartphones: "mobile",
+    laptops: "laptop",
+    tablets: "tablet",
+    "home-decoration": "appliances",
+    lighting: "appliances",
+    automotive: "audio",
+  };
+
+  // 🔹 Fetch all products from DummyJSON
   const fetchAllProducts = async () => {
+    setLoading(true);
+    setError(null);
+
     try {
       const res = await axios.get("https://dummyjson.com/products?limit=200");
-      const productsData = res.data.products;
+      const productsData = res.data.products || [];
 
-      // 🔹 Keep only categories we care about
-      const allowedCategories = {
-        smartphones: "mobile",
-        laptops: "laptop",
-        tablets: "tablet",
-        "home-decoration": "appliances",
-        lighting: "appliances",
-        automotive: "audio",
-      };
-
+      // Filter & remap categories
       const filteredProducts = productsData
-        .filter((item) => Object.keys(allowedCategories).includes(item.category))
+        .filter((item) => allowedCategories[item.category])
         .map((item) => ({
           ...item,
           category: allowedCategories[item.category], // remap to your custom names
+          brand: item.brand || "Unknown", // ✅ fallback for missing brand
         }));
 
       setData(filteredProducts);
-    } catch (error) {
-      console.error("❌ Error fetching products:", error);
+    } catch (err) {
+      console.error(" Error fetching products:", err);
+      setError("Failed to load products. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Function to extract unique values
-  const getUniqueCategory = (data, property) => {
-    let newVal = data?.map((curElem) => curElem[property]);
-    newVal = ["All", ...new Set(newVal)];
-    return newVal;
+  const getUniqueValues = (arr, property) => {
+    if (!arr || arr.length === 0) return ["All"];
+    return [
+      "All",
+      ...new Set(
+        arr
+          .map((item) => item[property])
+          .filter(Boolean) // ✅ removes null/undefined/empty
+      ),
+    ];
   };
 
-  // ✅ Recalculate categories only when data changes
+  //  Memoize to avoid unnecessary recalculations
   const categoryOnlyData = useMemo(
-    () => getUniqueCategory(data, "category"),
+    () => getUniqueValues(data, "category"),
     [data]
   );
 
-  const brandOnlyData = useMemo(
-    () => getUniqueCategory(data, "brand"),
-    [data]
-  );
+  const brandOnlyData = useMemo(() => getUniqueValues(data, "brand"), [data]);
 
   return (
     <DataContext.Provider
@@ -59,6 +71,8 @@ export const DataProvider = ({ children }) => {
         data,
         setData,
         fetchAllProducts,
+        loading,
+        error,
         categoryOnlyData,
         brandOnlyData,
       }}
@@ -68,4 +82,5 @@ export const DataProvider = ({ children }) => {
   );
 };
 
+// Custom hook
 export const getData = () => useContext(DataContext);
