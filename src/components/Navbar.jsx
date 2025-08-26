@@ -122,7 +122,7 @@ export default function Navbar({
             className="text-2xl font-bold text-red-600 hover:scale-105 transition"
             onClick={() => setMobileOpen(false)}
           >
-            <span className="font-serif">Z</span>
+            <span className="text-red-600 font-bold font-serif text-4xl hover:text-amber-700" >Z</span>
             <span className="font- text-gray-950" fontSize="2xl" >
               aptro
             </span>
