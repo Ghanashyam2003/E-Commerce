@@ -7,7 +7,7 @@ import notfound from "../assets/notfound.json";
 
 import ProductCard from "../components/ProductCard";
 import Pagination from "../components/Pagination";
-import FilterSection from "../components/FilterSection";
+import FilterSection from "../components/Filtersection";
 import MobileFilter from "../components/MobileFilter";
 
 
